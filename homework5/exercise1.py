@@ -35,7 +35,7 @@ solve(e == f(g(e, e)))
 # the example from the lecture:
 x1, x2, x3, x4, x5 = Consts('x1 x2 x3 x4 x5', S)
 solve(x1 == x2, x2 == x3, x4 == x5, x5 != x1, f(x1) != f(x3))
-# with the result "no solution".
+# with the result "no solutio n".
 
 # If we change the disequality to equality:
 solve(x1 == x2, x2 == x3, x4 == x5, x5 != x1, f(x1) == f(x3))

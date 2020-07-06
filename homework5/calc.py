@@ -1,10 +1,8 @@
+# exercise4-6
 import counter
 from z3 import *
-
-
 class Todo(Exception):
     pass
-
 
 ##################################
 # The abstract syntax for the Calc language:
@@ -312,4 +310,4 @@ if __name__ == '__main__':
     # print the converted program
     pp_func(new_f)
     # generate Z3 constraints
-    gen_cons_func(new_f)
+    print( gen_cons_func(new_f))

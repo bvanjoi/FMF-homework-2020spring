@@ -1,6 +1,5 @@
 from z3 import *
 
-
 class Todo(Exception):
     pass
 
@@ -37,3 +36,11 @@ int power3_new(int in){
 # P2 = ...
 # solve(...)
 
+S = DeclareSort('S')
+f = Function('f', S,S, S)
+in_ = Const('in_', S)
+output_a_0, output_a_1, output_a_2, output_b = Consts('output_a_0 output_a_1 output_a_2 output_b', S)
+P1 = And( output_a_0 == in_, output_a_1 == f(output_a_0, in_), output_a_2 == f(output_a_1, in_))
+P2 = output_b == f( f(in_,in_), in_)
+F = Implies( And(P1,P2), output_a_2 == output_b)
+solve(F)
