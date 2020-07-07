@@ -4,6 +4,7 @@ from typing import List, Dict
 
 from ast import *
 
+
 # a concrete execution engine.
 
 # concrete execution memory model will store arguments and concrete values
@@ -18,6 +19,7 @@ class Memory:
         return (f"Arguments: {arg_str}\n"
                 f"Concrete Values: \n"
                 f"{concrete_str}\n")
+
 
 #####################
 #  concrete execution
@@ -71,7 +73,6 @@ def interpret_exp(memory, exp):
         else:
             return left <= right
 
-
 def interpret_stm(memory, stm):
     if isinstance(stm, StmAssign):
         # TODO: Exercise 3 Code Here
@@ -82,18 +83,15 @@ def interpret_stm(memory, stm):
         # TODO: Exercise 3 Code Here
         # process StmIf by the big-step rules
         if interpret_exp(memory, stm.exp):
-            for s in stm.then_stms:
-                interpret_stm( memory, s)
+            interpret_stms(memory, stm.then_stms)
         else:
-            for s in stm.else_stms:
-                interpret_stm( memory, s)
-
+            interpret_stms(memory, stm.else_stms)
+            
     elif isinstance(stm, StmWhile):
         # TODO: Exercise 3 Code Here
         # process StmWhile by the big-step rules
         while interpret_exp(memory, stm.exp):
-            for s in stm.stms:
-                interpret_stm( memory, s)
+            interpret_stms(memory, stm.stms)
 
     return memory
 
@@ -108,6 +106,7 @@ def interpret_func(func, params):
     assert len(func.args) == len(params), "The number of parameters does not match"
     memory = Memory(func.args, dict(zip(func.args, params)))
     interpret_stms(memory, func.stms)
+
     return interpret_exp(memory, func.ret)
 
 
@@ -156,23 +155,16 @@ class TestConcrete(unittest.TestCase):
 
     def test_interpret_func_sum(self):
         # print(func_sum)
-        # and finally run this.
-        # check 0 + 1 + 2 +... +100 == 5050
         self.assertEqual(interpret_func(func_sum, [100]), 5050)
 
     def test_interpret_func_max(self):
         # print(func_max)
-        # second run this
-        # max(10,20) == 20
         self.assertEqual(interpret_func(func_max, [10, 20]), 20)
 
     def test_interpret_func_gcd(self):
         # print(func_gcd)
-        # first run this....
-        # gcd(60,48) == 12
         self.assertEqual(interpret_func(func_gcd, [60, 48]), 12)
 
 
 if __name__ == '__main__':
     unittest.main()
-    

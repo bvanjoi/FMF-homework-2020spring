@@ -18,13 +18,14 @@ i = Int('i')
 
 def gen_formulae():
     """Fill your code here"""
-    return Store( a, i*i - i*i, x)
+    b = Store(a, i * i - i * i, x)
+    return b
 
 def prove(P):
-    print( Select(P,0) >= x)
+    solve(Not(Select(P, 0) >= x))
 
 if __name__ == '__main__':
     P = gen_formulae()
     prove(P)
-    # It's print: Store(a, i*i - i*i, x)[0] >= x, not "unknown"
+    # It's print: no solution, not "unknown"
     # In my view, although i * i maybe exceed 2^31 - 1, but i * i equal i * i, so the result is not "unkonwn"

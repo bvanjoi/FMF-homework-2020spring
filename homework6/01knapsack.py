@@ -33,10 +33,13 @@ values = []
 
 # Initialize weights and values
 for i in range(len(W)):
-    """your code here"""
+    weights.append( vars[i] * W[i])
+    values.append(  vars[i] * V[i])
 
 # Add constraint wi+...+wk <= C
 """your code here"""
+solver.add( [Or( vars[i] == 0, vars[i] == 1) for i in range(len(W))])
+solver.add( Sum(weights) <= C)
 
 # Solve it via maximize
 solver.maximize(sum(values))

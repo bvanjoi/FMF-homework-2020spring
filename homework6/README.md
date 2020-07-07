@@ -4,7 +4,7 @@
 
 ##### part1: 学习部分
 - exercise.py: 对应 Exercise1, Exercise2.
-- pandas: 对应 exercise5. 主要是用来学习 pandans 方便实现 simplex.
+- pandas_exercise.py: 对应 exercise5. 主要是用来学习 pandans 方便实现 simplex.
 
 ##### part2: 理论算法实现部分
 - constraint.py: 构建了 Constraint 类，详细说明可见该脚本下的注释
@@ -13,8 +13,12 @@
 - simplex.py: simplex 算法的实现，由于这个是 challenge, 咱们就不写了哈[doge]
 
 ##### part3: 应用
+用 LA 解决以下问题：
 - seat_arrangement.py: 座位问题
-- 01knapsack.py: 最优化问题
+- 01knapsack.py: 0-1背包，最优化问题
+- four_queen.py: 四皇后
+
+--------------
 
 重点：
 - Guassian elimination: 即高斯消去

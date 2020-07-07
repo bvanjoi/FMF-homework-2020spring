@@ -15,6 +15,7 @@ class Term:
     def to_z3(self):
         pass
 
+
 class TVar(Term):
     def __init__(self, name, var):
         self.name = name
@@ -36,7 +37,7 @@ class TAdd(Term):
 
     def __str__(self):
         # TODO: Implement the printing of `T + E`
-        return f"({self.term} + {self.exp})"
+        return f'{self.term} + {self.exp}'
 
     def to_z3(self):
         # ⟦T + E⟧ = ⟦T⟧ + ⟦E⟧
@@ -50,10 +51,10 @@ class TAddr(Term):
 
     def __str__(self):
         # TODO: Implement the printing of `&x`
-        return f"&{self.var}"
+        return f'&{self.var}'
+
 
     def to_z3(self):
-        # ⟦&x⟧ = S(x)
         return S(self.var)
 
 
@@ -63,7 +64,8 @@ class TAddrStar(Term):
 
     def __str__(self):
         # TODO: Implement the printing of `&*T`
-        return f"&*{self.term}"
+        return f'&*{self.term}'
+
 
     def to_z3(self):
         # ⟦&*T⟧ = ⟦T⟧
@@ -76,8 +78,8 @@ class TStar(Term):
 
     def __str__(self):
         # TODO: Implement the printing of `*T`
-        return f"*{self.term}"
-
+        return f'*{self.term}'
+                
     def to_z3(self):
         # ⟦*T⟧ = H(⟦T⟧)
         return H(self.term.to_z3())
@@ -109,7 +111,7 @@ class EVar(Expression):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `x`
-        # ⟦x⟧ = H(S(x))
+        # [x] = H(S(x))
         return H(S(self.var))
 
 
@@ -122,8 +124,8 @@ class EConst(Expression):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `n`
-        # ⟦x⟧ = H(S(x))
-        return H(S(self.value))
+        # [n] = n
+        return self.value
 
 
 class EAdd(Expression):
@@ -136,9 +138,8 @@ class EAdd(Expression):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `E + E`
-        # ⟦E + E⟧ = ⟦E⟧ + ⟦E⟧
+        # [E + E] = [E] + [E]
         return self.left.to_z3() + self.right.to_z3()
-
 
 class EMinus(Expression):
     def __init__(self, left, right):
@@ -150,7 +151,7 @@ class EMinus(Expression):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `E - E`
-        # ⟦E - E⟧ = ⟦E⟧ - ⟦E⟧
+        # [E - E] = [E] - [E]
         return self.left.to_z3() - self.right.to_z3()
 
 
@@ -163,7 +164,7 @@ class EStar(Expression):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `*T`
-        # ⟦*T⟧ = H(⟦T⟧)
+        # [*T] = H(T)
         return H(self.term.to_z3())
 
 
@@ -184,7 +185,7 @@ class RTEq(Relation):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `T = T`
-        # ⟦T = T⟧ = ⟦T⟧ = ⟦T⟧
+        # [T = T] = [T] = [T]
         return self.left.to_z3() == self.right.to_z3()
 
 
@@ -198,7 +199,7 @@ class RTLess(Relation):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `T < T`
-        # ⟦T < T⟧ = ⟦T⟧ < ⟦T⟧
+        # [T < T] = [T] < [T]
         return self.left.to_z3() < self.right.to_z3()
 
 
@@ -212,9 +213,8 @@ class REEq(Relation):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `E = E`
-        # ⟦E = E⟧ = ⟦E⟧ = ⟦E⟧
+        # [E = E] = [E] = [E]
         return self.left.to_z3() == self.right.to_z3()
-
 
 
 class RELess(Relation):
@@ -227,7 +227,7 @@ class RELess(Relation):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `E < E`
-        # ⟦E < E⟧ = ⟦E⟧ < ⟦E⟧
+        # [E < E] = [E] < [E]
         return self.left.to_z3() < self.right.to_z3()
 
 
@@ -247,7 +247,7 @@ class P(Proposition):
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `P`
-        return self.rel.to_z3()
+        return self.rel
 
 
 class PNot(Proposition):
@@ -261,7 +261,6 @@ class PNot(Proposition):
         # TODO: Implement the translate procedure of `~ P`
         return Not(self.rel.to_z3())
 
-
 class PAnd(Proposition):
     def __init__(self, left, right):
         self.left = left
@@ -269,7 +268,7 @@ class PAnd(Proposition):
 
     def __str__(self):
         # TODO: Implement the printing of `P ∧ P`
-        return f"{self.left} /\ {self.right}"
+        return f'({self.left} /\ {self.right})'
 
     def to_z3(self):
         # TODO: Implement the translate procedure of `P ∧ P`
@@ -286,20 +285,21 @@ def doit():
     p2 = RTEq(TStar(TVar("p", p)), EConst(1))
 
     #  your code should print: ((p = &a) /\ (a = 1)) -> (*p = 1)
-    print(f"{p1} -> {p2}")  # yes! I print it!
+    print(f"{p1} -> {p2}")
 
     # TODO Exercise 9: finish the missing code in `to_z3()` methods, make it can translates pointer logic to z3's
     #  constraints. `to_z3()` methods in the `Term` class are already finished.
     prop = Implies(p1.to_z3(), p2.to_z3())
 
     # should print: Implies(And(H(S(p)) == S(a), H(S(a)) == 1), H(H(S(p))) == 1)
-    print(prop) # okay...
+    print(prop)
 
     s = Solver()
     s.add(Not(prop))
 
     # should print: unsat
     print(s.check())
+
 
 if __name__ == '__main__':
     doit()

@@ -83,6 +83,7 @@ class ExpBop(Exp):
 ###############################################
 # statement
 
+
 class Stm:
     def __init__(self):
         self.level = 0
@@ -98,7 +99,6 @@ class StmAssign(Stm):
         self.exp = exp
 
     def __str__(self):
-        
         indent_space = self.level * "\t"
         return f"{indent_space}{self.var} = {self.exp};\n"
 
@@ -119,9 +119,9 @@ class StmIf(Stm):
 
         indent_space = self.level * "\t"
 
-        then_stms_str = "".join([ str(stm) for stm in self.then_stms])
-        else_stms_str = "".join([ str(stm) for stm in self.else_stms])
-
+        then_stms_str = "".join([str(stm) for stm in self.then_stms])
+        else_stms_str = "".join([str(stm) for stm in self.else_stms])
+        
         res = (f"{indent_space}if({self.exp}){{\n"
                 f"{then_stms_str}"
                 f"{indent_space}}}\n")
@@ -131,7 +131,7 @@ class StmIf(Stm):
                     f"{indent_space}}}\n")
 
         return res
-            
+
 
 class StmWhile(Stm):
     def __init__(self, exp: Exp, stms: List[Stm]):
@@ -144,11 +144,12 @@ class StmWhile(Stm):
         for stm in self.stms:
             stm.level = self.level + 1
         indent_space = self.level * "\t"
-        stms_str = "".join([ str(stm) for stm in self.stms])
+        stms_str = "".join([str(stm) for stm in self.stms])
         
         return (f"{indent_space}while({self.exp}){{\n"
                 f"{stms_str}"
                 f"{indent_space}}}\n")
+
 
 ###############################################
 # function

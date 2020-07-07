@@ -1,5 +1,6 @@
 from z3 import *
 
+
 class Todo(Exception):
     pass
 
@@ -10,7 +11,7 @@ x, y = BitVecs('x y', 32)
 # For instance, for x=1, y=2, return (False, 2).
 # for x=0x80000000, y=2, return (True, 0)
 def mult_with_overflow(x, y):
-    '''
+    '''检查 x * y 是否溢出
     add your implementation here:
     '''
     INT_MAX = 2**31-1
@@ -29,8 +30,8 @@ def mult_with_overflow(x, y):
     elif simplify(x < 0):
         return mult_with_overflow( simplify(x<<1>>1), y)
     else:
-        return mult_with_overflow(x, simplify(y<<1>>1))
-    
+        return mult_with_overflow(x, simplify(y<<1>>1)) 
+
 
 if __name__ == '__main__':
     # some unit tests

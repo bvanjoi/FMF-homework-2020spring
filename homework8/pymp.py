@@ -9,14 +9,15 @@ from datetime import datetime
 class Todo(Exception):
     pass
 
-# create a type named Timer, and it contains attributes 'pid', 'time'.
+
 Timer = namedtuple('Timer', ('pid', 'time'))
+
 
 def timer(interval, result):
     for i in range(5):
         time.sleep(interval)
         # TODO: Exercise 4 Code Here
-        print(Timer(os.getpid(), time.time()))
+        print( Timer(os.getpid(), time.time()))
 
 if __name__ == '__main__':
     # TODO: Exercise 4: Start two timers which record time with different
@@ -34,7 +35,8 @@ if __name__ == '__main__':
     # Timer(pid=39835, time='2020-06-15 05:39:12.997')
     # Timer(pid=39835, time='2020-06-15 05:39:15.001')
     # Timer(pid=39835, time='2020-06-15 05:39:17.005')
-    p = mp.Process(target=timer, args=(1, ''))
+    #
+    p = mp.Process( target=timer, args=(1,''))
     p.start()
-    timer(1, '')
+    timer(1,'')
     p.join()

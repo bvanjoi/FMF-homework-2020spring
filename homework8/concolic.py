@@ -39,8 +39,9 @@ def concolic_stm(memory, stm):
         # TODO: Exercise 8 Code Here
         # process StmAssign by updating both symbolic memory and concrete memory
         memory.concrete_memory[stm.var] = interpret_exp(memory, stm.exp)
-        memory.symbolic_memory[stm.var] = symbolic_exp( memory,stm.exp)
+        memory.symbolic_memory[stm.var] = interpret_exp(memory, stm.exp)
 
+        
     elif isinstance(stm, StmIf):
         # TODO: Exercise 8 Code Here
         # process StmIf statement
@@ -50,7 +51,7 @@ def concolic_stm(memory, stm):
         else:
             memory.path_condition.append(neg_exp(symbolic_exp(memory, stm.exp)))
             memory = concolic_stms(memory, stm.else_stms)
-        
+
     elif isinstance(stm, StmWhile):
         # TODO: Exercise 9 Code Here
         # Executing the loop expression by concrete execution

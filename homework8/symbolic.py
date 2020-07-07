@@ -5,6 +5,7 @@ from typing import List, Dict
 from z3 import *
 from ast import *
 
+
 # a symbolic execution engine.
 
 # symbolic execution memory model will store arguments, symbolic values and path condition
@@ -39,6 +40,7 @@ def neg_exp(exp):
     if exp.bop is BOp.LE:
         return ExpBop(exp.left, exp.right, BOp.GT)
 
+
 #####################
 # compile AST expression to Z3
 def exp_2_z3(exp):
@@ -71,8 +73,6 @@ def exp_2_z3(exp):
             return (exp_2_z3(exp.left) < exp_2_z3(exp.right))
         elif exp.bop == BOp.LE:
             return (exp_2_z3(exp.left) <= exp_2_z3(exp.right))
-        
-
 
 # use Z3 to solve conditions
 def check_cond(memory, add_cond=None):
@@ -81,7 +81,7 @@ def check_cond(memory, add_cond=None):
     # add path condition
     for cond in memory.path_condition:
         solver.add(exp_2_z3(cond))
-        
+
     # add additional condition
     if add_cond:
         for cond in add_cond:
@@ -90,6 +90,7 @@ def check_cond(memory, add_cond=None):
     check_result = solver.check()
 
     return check_result, solver
+
 
 #####################
 #  symbolic execution
@@ -101,22 +102,23 @@ def symbolic_exp(memory, exp):
         # TODO: Exercise 5 Code Here
         # transfer the ExpVar to Exp which only contains argument variables
         # and ExpNum
-        var = memory.symbolic_memory[str(exp.var)]
+        var =  memory.symbolic_memory[str(exp.var)]
 
         if isinstance(var, ExpVar):
             return ExpVar(var)
         elif isinstance(var, ExpNum):
-            return symbolic_exp(memory, var)
+            return symbolic_exp(memory,var)
         elif str(var.left) == str(exp) or str(var.right) == str(exp):
             ''' prevent stack overflow
             '''
             return ExpBop(var.left, var.right, var.bop)
         return ExpBop(symbolic_exp(memory, var.left), symbolic_exp(memory, var.right),var.bop)
-        
+
     if isinstance(exp, ExpBop):
         # TODO: Exercise 5 Code Here
         # transfer ExpBop's left and right expression recursive
-        return ExpBop(symbolic_exp(memory, exp.left), symbolic_exp(memory, exp.right),exp.bop)
+        return ExpBop(symbolic_exp(memory, exp.left), symbolic_exp(memory, exp.right), exp.bop)
+
 
 def symbolic_stm(memory, stm, rest_stms, results):
     if isinstance(stm, StmAssign):
@@ -124,28 +126,24 @@ def symbolic_stm(memory, stm, rest_stms, results):
         # process StmAssign by updating symbolic memory
         memory.symbolic_memory[stm.var] = symbolic_exp(memory,stm.exp)
         symbolic_stms(memory, rest_stms, results)
-
-        
     if isinstance(stm, StmIf):
         # TODO: Exercise 6 Code Here
         # process StmIf by forking two processes
         # one of them will symbolic execute then_stms and rest_stms
         # other one will symbolic execute else_stms and rest_stms
         # also, start them and wait them to join
-        rest_stmsthen = [ i for i in stm.then_stms]
-        rest_stmselse = [ i for i in stm.else_stms]
-        
+        rest_stms_then = [ i for i in stm.then_stms]
+        rest_stms_else = [ i for i in stm.else_stms]
         for i in rest_stms:
-            rest_stmsthen.append(i)
-            rest_stmselse.append(i)
-
-        p1 = mp.Process(target = symbolic_stms,args = (memory,rest_stmsthen,results, stm.exp))
-        p2 = mp.Process(target = symbolic_stms,args = (memory,rest_stmselse,results, neg_exp(stm.exp)))
+            rest_stms_then.append(i)
+            rest_stms_else.append(i)
+        p1 = mp.Process(target = symbolic_stms,args = (memory,rest_stms_then,results, stm.exp))
+        p2 = mp.Process(target = symbolic_stms,args = (memory,rest_stms_else,results, neg_exp(stm.exp)))
         p1.start()
         p2.start()
         p1.join()
         p2.join()
-        
+
 
 def symbolic_stms(memory, stms, results, condition=None):
     if condition:
@@ -198,8 +196,9 @@ if __name__ == '__main__':
                                              "m": ExpBop(ExpVar("b"), ExpNum(5), BOp.MUL),
                                              "n": ExpBop(ExpVar("c"), ExpNum(2), BOp.MUL)},
                             path_condition=[])
-    print(example_memory)
+
     example_exp = ExpBop(ExpVar("m"), ExpVar("n"), BOp.EQ)
+
     # TODO: Exercise 5: Fill code in the function `symbolic_exp`
     # You should replace the variables in the expression according to the
     # symbolic memory. The result will be an expression only contains argument
@@ -209,10 +208,6 @@ if __name__ == '__main__':
     #
     # [m == n]  ===>  [((42 - a) * 5) == ((c + 20) * 2)]
     #
-    '''
-    c = c + 20 may caused stack overflow.
-    '''
-    
     print(f"[{example_exp}]  ===>  [{symbolic_exp(example_memory, example_exp)}]\n")
 
     # TODO: Exercise 6: Fill code in the function `symbolic_stm`
@@ -248,6 +243,7 @@ if __name__ == '__main__':
     #
     print(f1)
     result_memories = symbolic_function(f1)
+
     # TODO: Exercise 7: Fill code in the function `exp_2_z3`.
     # make it can transfers the conditions(AST Node) to z3 constraints.
     # note that our program only contains integer number
@@ -260,7 +256,7 @@ if __name__ == '__main__':
 
     # additional condition need to check: x - y = 0
     check_conditions = [ExpBop(ExpBop(ExpVar('x'), ExpVar('y'), BOp.MIN), ExpNum(0), BOp.EQ)]
-    
+
     for result_memory in result_memories:
         ret, s = check_cond(result_memory, check_conditions)
         if ret == sat:
