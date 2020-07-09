@@ -1,5 +1,5 @@
 import sys
-
+import time
 
 def generate(n: int):
     f = open('large_prog.py', "w+")
@@ -44,5 +44,8 @@ def generate(n: int):
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     num_ifs = sys.argv[1]
     generate(int(num_ifs))
+    end_time = time.time()
+    print(end_time - start_time, 's')

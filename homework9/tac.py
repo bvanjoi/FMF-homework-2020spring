@@ -2,11 +2,9 @@ from enum import Enum
 from typing import List, Set
 from imp_ast import Exp, ExpBop, ExpVar, ExpNum, BOp
 
-
 # a utility class to represent the code you should fill in.
 class Todo(Exception):
     pass
-
 
 ########################################
 # This bunch of code declare the syntax for the intermediate language: TAC.
@@ -14,7 +12,6 @@ class Todo(Exception):
 
 ###############################################
 # statement
-
 
 class Stm:
     def __init__(self):

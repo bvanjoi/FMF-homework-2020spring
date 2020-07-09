@@ -6,4 +6,3 @@ partB 部分作业的目的是定义两套语法 calc 和 tac, 在 compiler 中�
 
 重点：
 - SSA: Static single assignment form, 即静态单赋值，这是一种中间表示形式，被称为单赋值的原因是每个名字在 SSA 中仅被赋值一次，同时尽在每个变量使用之前定义。
-- 

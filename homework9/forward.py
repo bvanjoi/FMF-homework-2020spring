@@ -71,7 +71,7 @@ def vc(func: tac.Function, pc: int, rou: Dict[str, imp_ast.Exp], sigma: Set[int]
         pc += 1
         return vc(func, pc, rou, sigma)
 
-    if isinstance(stm, tac.StmGoto):
+    elif isinstance(stm, tac.StmGoto):
         return vc(func, stm.address, rou, sigma)
 
     # TODO: Exercise 9 code here:
@@ -93,7 +93,34 @@ def vc(func: tac.Function, pc: int, rou: Dict[str, imp_ast.Exp], sigma: Set[int]
     # VC(pc, rou, sigma) = rou(E)                               pc->inv E, pc in sigma
     #
     # VC(pc, rou, sigma) = rou(post["result" |-> E])            pc->return E
-
+    elif isinstance(stm, tac.StmAssign):
+        rou[stm.var] = map_2_rou(stm.exp, func.args, rou)
+        pc += 1
+        return vc(func, pc, rou, sigma)
+    elif isinstance(stm, tac.StmIf):
+        return imp_ast.ExpBop(
+                imp_ast.ExpBop(                stm.exp,  vc(func, stm.true_address, rou, sigma), imp_ast.BOp.IM),
+                imp_ast.ExpBop( imp_ast.ExpNeg(stm.exp), vc(func, stm.false_address, rou, sigma), imp_ast.BOp.IM),
+                imp_ast.BOp.AND)
+    elif isinstance(stm, tac.StmInv):
+        if pc in sigma:
+            return map_2_rou(stm.inv, func.args, rou)
+        else:
+            rou_prime, renamed_modified_vars = get_rou_prime(stm.modified_vars,rou)
+            sigma.add(pc)
+            pc += 1
+            return imp_ast.ExpBop(
+                    map_2_rou(stm.inv, func.args, rou),
+                    imp_ast.ExpBop(
+                        imp_ast.ExpUni(
+                            renamed_modified_vars,
+                            map_2_rou(stm.inv, func.args, rou_prime)),
+                        vc( func, pc, rou_prime, sigma),
+                    imp_ast.BOp.IM),
+                   imp_ast.BOp.AND)
+    elif isinstance(stm, tac.StmReturn):
+        func.post = var_substitution("result", stm.e, func.post)
+        return map_2_rou(func.post, func.args, rou)
 
 def vc_func(func: tac.Function) -> imp_ast.Exp:
     rou_init = dict(zip(func.args, [imp_ast.ExpVar(arg) for arg in func.args]))
@@ -108,15 +135,52 @@ def vc_func(func: tac.Function) -> imp_ast.Exp:
 if __name__ == '__main__':
     # fill the modified variables in StmInv
     imp_ast.fill_in_modified_vars(imp_ast.fun_foo)
-
+    '''imp_ast.fun_foo
+    pre={n <= 0}
+    foo(n){
+        inv={n <= 5}
+        modified_vars={n}
+        while(n < 5){
+                n = n + 1;
+        }
+        return n;
+    }
+    post={result == 5}
+    '''
     # compile the source code to low-level code:
     f = compiler.compile_fun(imp_ast.fun_foo)
     print(f)
-
+    ''' low-level code
+    pre=n <= 0
+    foo(n){
+    L_1:
+        inv=n <= 5, modified_vars={'n'}
+        if(n < 5, L_2, L_3, -1, -1)
+    L_2:
+        n = n + 1
+        goto L_1, -1
+    L_3:
+        return n
+    }
+    post=result == 5
+    '''
     # convert the label address to physical address
     f = tac.assemble(f)
     print(f)
-
+    '''f
+    pre=n <= 0
+    foo(n){
+    L_1:
+        inv=n <= 5, modified_vars={'n'}
+        if(n < 5, L_2, L_3, 3, 6)
+    L_2:
+        n = n + 1
+        goto L_1, 0
+    L_3:
+        return n
+    }
+    post=result == 5
+    '''
     # generate verification conditions:
     the_vc = vc_func(f)
 

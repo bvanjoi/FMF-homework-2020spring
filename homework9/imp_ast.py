@@ -111,14 +111,14 @@ class ExpUni(Exp):
 def exp_num_nodes(exp: Exp) -> int:
     if isinstance(exp, ExpNum):
         return 1
-    if isinstance(exp, ExpVar):
+    elif isinstance(exp, ExpVar):
         return 1
-    if isinstance(exp, ExpBop):
+    elif isinstance(exp, ExpBop):
         return exp_num_nodes(exp.left) + exp_num_nodes(exp.right)
-    if isinstance(exp, ExpNeg):
+    elif isinstance(exp, ExpNeg):
         return exp_num_nodes(exp.exp)
-    if isinstance(exp, ExpUni):
-        pass
+    elif isinstance(exp, ExpUni):
+        return exp_num_nodes(exp.exp)
 
 ###############################################
 # statement
